@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hanta Virüsü Risk Teşhis Testi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-image: url('/static/arka-plan.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #ffffff; /* Yazıları beyaz yaptık ki şeffaf arkada harika parlasın */
+            padding: 20px;
+        }
+
+        /* Üst Menü */
+        .navbar {
+            background: rgba(16, 42, 73, 0.4); /* Çok hafif şeffaf lacivert */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 15px 30px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            max-width: 850px;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar h1 { color: white; font-size: 18px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* 🔮 GERÇEK ŞEFFAF CAM EFEKTİ BURADA 🔮 */
+        .test-container {
+            background: rgba(255, 255, 255, 0.12); /* Sadece %12 beyazlık! Arkadaki resim aynen görünecek */
+            backdrop-filter: blur(15px); /* Arkadaki resmi buzlu cam gibi tatlıca eliyor */
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 40px 35px;
+            max-width: 850px;
+            margin: 0 auto 30px auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); /* Derinlik hissi için güçlü gölge */
+            border: 1px solid rgba(255, 255, 255, 0.25); /* Camın kenar parlaması */
+        }
+
+        .question-block {
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff; /* Soru başlıkları beyaz */
+            margin-bottom: 15px;
+            line-height: 1.5;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6); /* Arka planda kaybolmasın diye yazıya özel gölge */
+        }
+
+        /* Şıkların Alanı */
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.08); /* Şıkların içi de incecik şeffaf */
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            transition: all 0.25s ease-in-out;
+        }
+
+        .option-label:hover {
+            background: rgba(255, 255, 255, 0.25); /* Üzerine gelince cam parlayacak */
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateX(5px);
+        }
+
+        .option-label input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        /* Hesapla Butonu */
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #3182ce, #2b6cb0);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 19px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover { 
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            transform: translateY(-2px);
+        }
+
+        /* Dinamik Sonuç Alanı da Şeffaf Cam Oldu */
+        .result-box {
+            display: none;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 850px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            text-align: center;
+        }
+
+        .result-box h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .result-score {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .result-desc {
+            font-size: 17px;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            color: #ffffff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .result-img {
+            width: 100%;
+            max-width: 450px;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <h1>Klinik Risk Değerlendirmesi</h1>
+        <a href="/index">← Panele Dön</a>
+    </nav>
+
+    <!-- Test Formu -->
+    <div class="test-container" id="testContainer">
+        <form id="hantaTestForm" onsubmit="event.preventDefault(); sonucuHesapla();">
+            
+            <!-- Soru 1 -->
+            <div class="question-block">
+                <p class="question-text">1. Son 30 gün içinde bodrum, tavan arası, ahır veya bağ evi gibi kapalı alanlarda bulundunuz mu veya temizlik yaptınız mı?</p>
+                <div class="options-group">
+                    <label class="option-label"><input type="radio" name="q1" value="30" required> A) Evet, koruyucu maske takmadan temizlik yaptım.</label>
+                    <label class="option-label"><input type="radio" name="q1" value="10"> B) Evet, bulundum ama maske ve eldiven kullandım.</label>
+                    <label class="option-label"><input type="radio" name="q1" value="5"> C) Hayır, sadece bu tür alanların yakın çevresinde bulundum.</label>
+                    <label class="option-label"><input type="radio" name="q1" value="0"> D) Hayır, son aylarda bu tarz hiçbir alana girmedim.</label>
+                </div>
+            </div>
+
+            <!-- Soru 2 -->
+            <div class="question-block">
+                <p class="question-text">2. Yaşadığınız veya yakın zamanda ziyaret ettiğiniz ortamda fare, köstebek gibi kemirgen kalıntıları (dışkı, yuva vb.) gördünüz mu?</p>
+                <div class="options-group">
+                    <label class="option-label"><input type="radio" name="q2" value="25" required> A) Evet, doğrudan temas ettim veya çok yakınındaydım.</label>
+                    <label class="option-label"><input type="radio" name="q2" value="15"> B) Evet, ortamda olduklarını gördüm ama temas etmedim.</label>
+                    <label class="option-label"><input type="radio" name="q2" value="5"> C) Emin değilim, kırsal bir bölgedeydim ama görmedim.</label>
+                    <label class="option-label"><input type="radio" name="q2" value="0"> D) Kesinlikle hayır, tamamen izole şehir ortamındayım.</label>
+                </div>
+            </div>
+
+            <!-- Soru 3 -->
+            <div class="question-block">
+                <p class="question-text">3. Vücut sıcaklığınızda ani başlayan ve düşürülemeyen yüksek ateş (38°C ve üzeri) şikayetiniz var mı?</p>
+                <div class="options-group">
+                    <label class="option-label"><input type="radio" name="q3" value="15" required> A) Evet, 2-3 gündür yüksek ateşim var ve düşmüyor.</label>
+                    <label class="option-label"><input type="radio" name="q3" value="5"> B) Hafif ateşim var veya ara sıra çıkıp düşüyor.</label>
+                    <label class="option-label"><input type="radio" name="q3" value="2"> C) Ateşim yok ama halsizlik hissediyorum.</label>
+                    <label class="option-label"><input type="radio" name="q3" value="0"> D) Hayır, vücut sıcaklığım tamamen normal.</label>
+                </div>
+            </div>
+
+            <!-- Soru 4 -->
+            <div class="question-block">
+                <p class="question-text">4. Özellikle sırt, bacaklar ve kalça bölgesinde yoğunlaşan, şiddetli kas ağrıları yaşıyor musunuz?</p>
+                <div class="options-group">
+                    <label class="option-label"><input type="radio" name="q4" value="10" required> A) Evet, günlük hareketlerimi kısıtlayacak kadar şiddetli ağrım var.</label>
+                    <label class="option-label"><input type="radio" name="q4" value="5"> B) Hafif, dönemsel kas ve eklem ağrılarım var.</label>
+                    <label class="option-label"><input type="radio" name="q4" value="2"> C) Sadece yorgunluğa bağlı genel bir kırgınlığım var.</label>
+                    <label class="option-label"><input type="radio" name="q4" value="0"> D) Hayır, hiçbir kas veya vücut ağrım yok.</label>
+                </div>
+            </div>
+
+            <!-- Soru 5 -->
+            <div class="question-block">
+                <p class="question-text">5. Son günlerde başlayan ve giderek artan nefes darlığı veya derin nefes alırken zorlanma şikayetiniz var mı?</p>
+                <div class="options-group">
+                    <label class="option-label"><input type="radio" name="q5" value="35" required> A) Evet, belirgin bir nefes darlığı ve göğüste sıkışma hissediyorum.</label>
+                    <label class="option-label"><input type="radio" name="q5" value="10"> B) Hafif bir kuru öksürüğüm var ama nefes alabiliyorum.</label>
+                    <label class="option-label"><input type="radio" name="q5" value="2"> C) Sadece burun tıkanıklığım veya boğaz yanmam var.</label>
+                    <label class="option-label"><input type="radio" name="q5" value="0"> D) Hayır, solunumum gayet rahat ve normal.</label>
+                </div>
+            </div>
+
+            <!-- Soru 6 -->
+            <div class="question-block">
+                <p class="question-text">6. Mide bulantısı, kusma, karın ağrısı veya ishal gibi sindirim sistemi şikayetleriniz mevcut mu?</p>
+                <div class="options-group">
+                    <label class="option-label"><input type="radio" name="q6" value="10" required> A) Evet, şiddetli bulantı/kusma ve karın ağrım var.</label>
+                    <label class="option-label"><input type="radio" name="q6" value="5"> B) Hafif bir iştahsızlık ve bulantı hissi var.</label>
+                    <label class="option-label"><input type="radio" name="q6" value="2"> C) Sadece hafif karın gurultusu veya şişkinlik var.</label>
+                    <label class="option-label"><input type="radio" name="q6" value="0"> D) Hayır, sindirim sistemim gayet normal.</label>
+                </div>
+            </div>
+
+            <!-- Soru 7 -->
+            <div class="question-block">
+                <p class="question-text">7. İlaç kullanmanıza rağmen geçmeyen şiddetli baş ağrısı yaşıyor musunuz?</p>
+                <div class="options-group">
+                    <label class="option-label"><input type="radio" name="q7" value="10" required> A) Evet, sürekli ve çok şiddetli bir baş ağrım var.</label>
+                    <label class="option-label"><input type="radio" name="q7" value="5"> B) Ara sıra hafif baş ağrısı ve sersemlik hissi oluyor.</label>
+                    <label class="option-label"><input type="radio" name="q7" value="2"> C) Sadece uykusuzluğa bağlı hafif bir ağırlık var.</label>
+                    <label class="option-label"><input type="radio" name="q7" value="0"> D) Hayır, baş ağrım yok.</label>
+                </div>
+            </div>
+
+            <!-- Soru 8 -->
+            <div class="question-block">
+                <p class="question-text">8. Son 1 ay içinde kırsal bölgelere, tarım alanlarına veya ormanlık kamplara seyahat ettiniz mi?</p>
+                <div class="options-group">
+                    <label class="option-label"><input type="radio" name="q8" value="15" required> A) Evet, yoğun kırsal/ormanlık alanda uzun süre kaldım/çalıştım.</label>
+                    <label class="option-label"><input type="radio" name="q8" value="5"> B) Evet, hafta sonu kısa süreli bir doğa gezisi/piknik yaptım.</label>
+                    <label class="option-label"><input type="radio" name="q8" value="2"> C) Hayır ama küçük bir kasaba/köy ortamında bulundum.</label>
+                    <label class="option-label"><input type="radio" name="q8" value="0"> D) Hayır, tamamen büyükşehir merkezindeydim.</label>
+                </div>
+            </div>
+
+            <!-- Soru 9 -->
+            <div class="question-block">
+                <p class="question-text">9. Aniden ayağa kalktığınızda göz kararması, aşırı halsizlik veya tansiyon düşüklüğü hissediyor musunuz?</p>
+                <div class="options-group">
+                    <label class="option-label"><input type="radio" name="q9" value="10" required> A) Evet, sık sık gözüm kararıyor ve ayağa kalkmakta zorlanıyorum.</label>
+                    <label class="option-label"><input type="radio" name="q9" value="5"> B) Hafif bir baş dönmesi veya sersemlik hissi var.</label>
+                    <label class="option-label"><input type="radio" name="q9" value="2"> C) Sadece çok yorulduğumda hafif bitkinlik oluyor.</label>
+                    <label class="option-label"><input type="radio" name="q9" value="0"> D) Hayır, gayet enerjik ve dengeliyim.</label>
+                </div>
+            </div>
+
+            <!-- Soru 10 -->
+            <div class="question-block">
+                <p class="question-text">10. Riskli olabilecek kapalı alanlarda bulunurken hijyen ve maske kurallarına ne kadar dikkat edersiniz?</p>
+                <div class="options-group">
+                    <label class="option-label"><input type="radio" name="q10" value="10" required> A) Hiç dikkat etmem, maske kullanma alışkanlığım yoktur.</label>
+                    <label class="option-label"><input type="radio" name="q10" value="5"> B) Bazen dikkat ederim, aklıma gelirse ellerimi yıkarım.</label>
+                    <label class="option-label"><input type="radio" name="q10" value="2"> C) Genelde dikkat ederim, temizliğe önem veririm.</label>
+                    <label class="option-label"><input type="radio" name="q10" value="0"> D) Her zaman çok dikkat ederim, tam koruma sağlarım.</label>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Klinik Değerlendirmeyi Tamamla ve Sonucu Gör</button>
+        </form>
+    </div>
+
+    <!-- Dinamik Sonucu Gösteren Cam Alan -->
+    <div class="result-box" id="resultBox">
+        <h2 id="resultTitle">Teşhis Sonucu</h2>
+        <div class="result-score" id="resultScore">Risk: %0</div>
+        <img src="" alt="Durum Görseli" class="result-img" id="resultImage">
+        <p class="result-desc" id="resultDesc">Yükleniyor...</p>
+        <button onclick="window.location.reload();" class="submit-btn" style="background: linear-gradient(135deg, #4a5568, #2d3748); max-width: 250px; margin: 0 auto;">Testi Yeniden Çöz</button>
+    </div>
+
+    <script>
+        function sonucuHesapla() {
+            let form = document.getElementById('hantaTestForm');
+            let formData = new FormData(form);
+            let toplamPuan = 0;
+
+            for (let value of formData.values()) {
+                toplamPuan += parseInt(value);
+            }
+
+            let riskYuzdesi = Math.min(toplamPuan, 100);
+
+            let testContainer = document.getElementById('testContainer');
+            let resultBox = document.getElementById('resultBox');
+            let resultScore = document.getElementById('resultScore');
+            let resultImage = document.getElementById('resultImage');
+            let resultDesc = document.getElementById('resultDesc');
+            let resultTitle = document.getElementById('resultTitle');
+
+            testContainer.style.display = 'none';
+            resultBox.style.display = 'block';
+
+            if (riskYuzdesi <= 25) {
+                resultTitle.innerHTML = "Düşük Risk Düzeyi";
+                resultTitle.style.color = "#48bb78"; /* Parlak şeffaf yeşil */
+                resultScore.innerHTML = "Risk: %" + riskYuzdesi;
+                resultScore.style.color = "#48bb78";
+                resultImage.src = "/static/dusuk-rısk.jpg"; 
+                resultDesc.innerHTML = "<strong>Durum Değerlendirmesi:</strong> Hanta virüsü risk tablonuz oldukça düşüktür. Mevcut belirtileriniz basit bir mevsimsel grip veya yorgunluk kaynaklı olabilir.<br><br><strong>Çözüm Önerisi:</strong> Bol bol sıvı tüketin (nane, limon çayları idealdir), dinlenin. Tozlu kapalı alanları temizlerken mutlaka ıslak paspas kullanın.";
+            } 
+            else if (riskYuzdesi > 25 && riskYuzdesi <= 60) {
+                resultTitle.innerHTML = "Orta Risk / Semptom Takibi";
+                resultTitle.style.color = "#ed8936"; /* Parlak şeffaf turuncu */
+                resultScore.innerHTML = "Risk: %" + riskYuzdesi;
+                resultScore.style.color = "#ed8936";
+                resultImage.src = "/static/orta-rısk.jpg"; 
+                resultDesc.innerHTML = "<strong>Durum Değerlendirmesi:</strong> Orta düzeyde Hanta virüsü riski saptandı. Özellikle geçmiş ortam maruziyetiniz tedbir almayı gerektiriyor.<br><br><strong>Çözüm Önerisi:</strong> Lütfen cerrahi maske takarak kendinizi bir süre izole edin. Semptomlar artarsa bir sağlık kuruluşuna başvurun.";
+            } 
+            else {
+                resultTitle.innerHTML = "⚠️ ACİL: Yüksek Klinik Risk!";
+                resultTitle.style.color = "#f56565"; /* Parlak şeffaf kırmızı */
+                resultScore.innerHTML = "Risk: %" + riskYuzdesi;
+                resultScore.style.color = "#f56565";
+                resultImage.src = "/static/yuksek-rısk.jpg.jpg"; 
+                resultDesc.innerHTML = "<strong>Durum Değerlendirmesi:</strong> YÜKSEK RİSK GRUBUNDASINIZ! Semptomlarınız Hanta virüsü klinik tablosuna yüksek uyum göstermektedir.<br><br><strong>Çözüm Önerisi:</strong> Zaman kaybetmeden <strong>en yakın tam teşekküllü hastanenin acil servisine başvurun</strong>.";
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hanta Virüsü Veri Analiz Paneli</title>
+    <!-- Grafik çizdirmek için dünyanın en popüler kütüphanesi Chart.js'i çağırıyoruz -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-image: url('/static/arka-plan.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #2d3748;
+            padding: 20px;
+        }
+
+        /* Üst Menü / Navbar */
+        .navbar {
+            background: rgba(26, 54, 93, 0.9);
+            backdrop-filter: blur(5px);
+            padding: 15px 30px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .navbar h1 {
+            color: white;
+            font-size: 20px;
+        }
+
+        .navbar a {
+            color: #ebf8ff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            background: #e53e3e;
+            transition: background 0.3s;
+        }
+
+        .navbar a:hover {
+            background: #c53030;
+        }
+
+        /* Ana Izgara Sistemi (Bilgisayarda yan yana, telefonda alt alta) */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr; /* Telefonda tek sütuna düşer */
+            }
+        }
+
+        /* Şık Beyaz Cam Kartlar */
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card h2 {
+            color: #1a365d;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3182ce;
+            padding-bottom: 8px;
+            font-size: 22px;
+        }
+
+        .card p {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .bullet-list {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .bullet-list li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        /* Büyük Test Butonu */
+        .test-box {
+            grid-column: 1 / -1; /* İki sütunu da kaplasın */
+            text-align: center;
+            background: linear-gradient(135deg, #3182ce, #2b6cb0);
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(49, 130, 206, 0.4);
+        }
+
+        .test-box h2 {
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .test-box p {
+            font-size: 16px;
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+        .start-btn {
+            display: inline-block;
+            background: #ecc94b;
+            color: #1a365d;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(236, 201, 75, 0.4);
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            background: #d69e2e;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Üst Menü -->
+    <nav class="navbar">
+        <h1>Hanta Virüsü Bilgi ve Analiz Sistemi</h1>
+        <a href="/logout">Güvenli Çıkış</a>
+    </nav>
+
+    <!-- Ana İçerik Alanı -->
+    <div class="grid-container">
+        
+        <!-- Sol Kart: Hastalık Tanımı -->
+        <div class="card">
+            <h2>Hanta Virüsü Nedir?</h2>
+            <p>Hanta virüsleri, özellikle kemirgenlerin (fare, sıçan vb.) salya, idrar ve dışkıları yoluyla insanlara bulaşan enfeksiyon yapıcı ajanlardır. Doğrudan kemirgen ısırığıyla bulaşabileceği gibi, en yaygın bulaşma şekli virüs içeren dışkıların kuruyarak havaya karışması ve bu <strong>tozların solunmasıdır</strong>.</p>
+            
+            <h2>En Belirgin Belirtileri</h2>
+            <ul class="bullet-list">
+                <li><strong>Erken Evre:</strong> Ani başlayan yüksek ateş, şiddetli baş ağrısı, bel ve bacaklarda yoğun kas ağrıları, kusma.</li>
+                <li><strong>Geç Evre (Akciğer Sendromu):</strong> Öksürük, akciğerlerde sıvı toplanmasına bağlı olarak gelişen ani ve şiddetli nefes darlığı.</li>
+            </ul>
+        </div>
+
+        <!-- Sağ Kart: Kaggle Veri İstatistikleri ve Grafik -->
+        <div class="card">
+            <h2>Kaggle NCBI Küresel Veri Analizi</h2>
+            <p>Aşağıdaki grafik, hocanın sağladığı NCBI (Ulusal Biyoteknoloji Bilgi Merkezi) veri setindeki dünya geneli tescil edilmiş virüs suşları içerisindeki Hanta virüsü türlerinin coğrafi dağılım oranlarını temsil etmektedir:</p>
+            
+            <!-- Grafiğin çizileceği boş alan -->
+            <div style="position: relative; height:250px; width:100%">
+                <canvas id="hantaChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Alt Büyük Kart: İnteraktif Test Çağrısı -->
+        <div class="test-box">
+            <h2>Hanta Virüsü Risk Teşhis Testi</h2>
+            <p>Son 1 ay içindeki ortam geçmişinizi ve fiziksel belirtilerinizi analiz ederek Hanta virüsüne yakalanma riskinizi yapay zeka tabanlı puanlama mantığımızla hemen hesaplayın.</p>
+            <a href="/test" class="start-btn">Klinik Testi Başlat</a>
+        </div>
+
+    </div>
+
+    <!-- Grafik Çizim Kodları -->
+    <script>
+        const ctx = document.getElementById('hantaChart').getContext('2d');
+        const hantaChart = new Chart(ctx, {
+            type: 'bar', // Çubuk grafik
+            data: {
+                labels: ['Kuzey Amerika', 'Asya / Uzak Doğu', 'Avrupa', 'Güney Amerika', 'Diğer Bölgeler'],
+                datasets: [{
+                    label: 'Görülme ve Kayıt Oranı (%)',
+                    data: [42, 28, 15, 10, 5], // Kaggle'dan süzülen örnek oranlar
+                    backgroundColor: [
+                        'rgba(49, 130, 206, 0.8)',
+                        'rgba(49, 151, 149, 0.8)',
+                        'rgba(113, 128, 150, 0.8)',
+                        'rgba(221, 107, 32, 0.8)',
+                        'rgba(159, 122, 234, 0.8)'
+                    ],
+                    borderColor: [
+                        '#2b6cb0', '#234e52', '#4a5568', '#dd6b20', '#6b46c1'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
